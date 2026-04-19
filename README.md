@@ -64,7 +64,7 @@ key total. The ⭐ rows are the easiest free options to start with.
 
 ## 🚀 Deploy
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/darkreaperboy/infochan)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/darkreaperboy/infochan) — *Cloudflare's form won't let fields stay empty. For anything you don't care about, just type any junk (`-`, `none`, `skip`, `asdf`, whatever) and move on. The code treats those as unset.*
 
 After the deploy finishes:
 
