@@ -186,6 +186,83 @@ Everything is in `main.js`. The notable pieces:
 
 ---
 
+## Adding or removing a provider
+
+Providers live in the `CONFIG.PROVIDERS = [ ... ]` array near the top of
+`main.js`. Each entry is a plain object — no classes to subclass, no registry
+to touch. The `AIProvider` class at runtime reads `baseURL`, `keys`, and the
+flags below to decide how to talk to the endpoint.
+
+### Add a new OpenAI-compatible provider
+
+Most providers (Groq, OpenRouter, Mistral, DeepSeek, Together, Fireworks,
+Anyscale, local LM Studio / Ollama with `openai` mode, etc.) speak the OpenAI
+chat-completions dialect. Drop in a block like this anywhere inside the
+`PROVIDERS` array:
+
+```js
+/**
+ * deepseek — reasoning + chat models, cheap.
+ * How to get a key: https://platform.deepseek.com/api_keys
+ */
+{
+  name: "deepseek",                        // shown in /system menu. lowercase, short.
+  baseURL: "https://api.deepseek.com/v1",  // must be OpenAI-compatible (ends in /v1 usually)
+  keys: ["YOUR_DEEPSEEK_API_KEY"],         // array — add more to enable auto-rotation
+  defaultModel: "deepseek-chat",           // model id picked until user overrides in /system
+  supportsImages: false,                   // true if the provider accepts image inputs
+  useHardcodedModels: false,               // true = skip /v1/models fetch, use a fixed list
+},
+```
+
+That's it. Redeploy and the new provider shows up in `/system → Providers`.
+
+**To also prompt for its key on the Cloudflare deploy form**, add one line to
+`wrangler.toml` `[vars]`:
+
+```toml
+DEEPSEEK_KEYS = ""   # comma-separated for key rotation
+```
+
+The hydration code in `main.js` auto-derives the env-var name from the provider
+name: uppercase it, replace non-alphanumerics with `_`, append `_KEYS`. So
+`deepseek` → `DEEPSEEK_KEYS`, `my cool ai` → `MY_COOL_AI_KEYS`. No code change
+needed for hydration.
+
+### Flags cheat-sheet
+
+| Flag                 | When to set                                                              |
+| -------------------- | ------------------------------------------------------------------------ |
+| `supportsImages`     | Provider accepts image parts in chat messages (GPT-4o, Gemini, etc.)     |
+| `useHardcodedModels` | `true` if `/v1/models` is missing or returns garbage. Then edit the hardcoded list in `AIProvider`. |
+| `isGemini`           | Google AI Studio dialect (not OpenAI). Routed through CF AI Gateway.     |
+| `isCloudflareAI`     | Cloudflare Workers AI (`@cf/...` model IDs). Uses account/token instead of a keys array the normal way. |
+| `isCustom`           | Per-user baseURL + key set via `/system → Custom provider`. Don't reuse. |
+
+For anything that isn't OpenAI-compatible or one of the three dialects above,
+you'll need to add a new branch in the `AIProvider` class's `buildRequest` /
+`parseResponse` methods. That's a bigger job — grep for `isGemini` to see the
+pattern.
+
+### Remove a provider
+
+Two places:
+
+1. **`main.js`** — delete the whole `{ name: "foo", ... }` block from
+   `CONFIG.PROVIDERS`. If the provider had a docstring comment above it, delete
+   that too.
+2. **`wrangler.toml`** — delete its `FOO_KEYS = ""` line (if present).
+
+Optional third step: **`README.md`** — drop its row from the provider table
+above so the deploy-form docs don't lie.
+
+Any user who had that provider selected in their `/system` settings will fall
+back to the default provider on their next message. No database migration
+needed; the per-user settings are re-read every request and unknown provider
+names are ignored.
+
+---
+
 ## Limits worth knowing
 
 - **Cloudflare free plan**: 50 outbound subrequests per Worker invocation.
