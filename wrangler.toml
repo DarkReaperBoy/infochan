@@ -62,6 +62,65 @@ compatibility_flags = ["nodejs_compat"]
 # no_bundle = true
 
 # ---------------------------------------------------------------------------
+#  [vars]  — the Cloudflare Deploy-button UI prompts for each of these at
+#  deploy time. After deploy you can also edit them in the dashboard:
+#     Workers & Pages → <your-worker> → Settings → Variables → Edit Variables
+#
+#  SECURITY NOTE: values in [vars] are PLAINTEXT (visible in the dashboard
+#  and in logs). For production, promote any of these to encrypted secrets:
+#     wrangler secret put TELEGRAM_TOKENS
+#     wrangler secret put CLOUDFLARE_API_TOKEN
+#     ...etc. The hydration code in main.js reads both the same way.
+#
+#  Leave any field empty ("") to fall back to whatever is hardcoded in
+#  main.js CONFIG. Unknown providers can be set via extra *_KEYS vars in
+#  the dashboard — the code hydrates whatever matches.
+# ---------------------------------------------------------------------------
+[vars]
+# Telegram — REQUIRED. One or more bot tokens, comma-separated.
+#   Get from @BotFather → /newbot
+TELEGRAM_TOKENS = ""
+
+# Admin IDs — REQUIRED. Numeric Telegram user IDs, comma-separated.
+#   Get yours from @userinfobot
+ADMIN_USER_IDS = ""
+
+# Cloudflare — needed for Workers AI (TTS, STT, image gen) and for Gemini.
+#   Account ID: Workers & Pages → sidebar → Account ID
+#   API token:  https://dash.cloudflare.com/profile/api-tokens
+#               scope = Workers AI: Read + Run
+CLOUDFLARE_ACCOUNT_ID = ""
+CLOUDFLARE_API_TOKEN  = ""
+
+# Cloudflare AI Gateway slug — REQUIRED only if you use the `gemini` provider.
+#   Dashboard → AI → AI Gateway → Create. Any slug works.
+CLOUDFLARE_GATEWAY_ID = ""
+
+# Optional: web search via Serper.
+#   https://serper.dev/ → dashboard → API Key
+SERPER_API_KEY = ""
+
+# ---- Provider keys (all optional — fill in the ones you want to use) ----
+#
+# Each is comma-separated. You need at least ONE working provider or the
+# bot won't be able to reply. The easiest free options are GEMINI_KEYS
+# (Google AI Studio) and GROQ_KEYS (console.groq.com).
+GEMINI_KEYS     = ""
+GROQ_KEYS       = ""
+OPENROUTER_KEYS = ""
+MISTRAL_KEYS    = ""
+GITHUB_KEYS     = ""   # GitHub Models — format: github_pat_...
+POE_KEYS        = ""   # Poe.com (requires paid subscription)
+CEREBRAS_KEYS   = ""
+NVIDIA_KEYS     = ""
+#
+# Other providers recognised by the hydration code (set via dashboard if you
+# want them, they won't show up in the deploy prompt by default):
+#   KIVEST_KEYS, G4F_KEYS, G4F_OLLAMA_KEYS, G4F_GEMINI_KEYS,
+#   MNNAI_KEYS, NAGA_KEYS, NAVY_KEYS, POIXE_KEYS,
+#   VERCEL_SHARE_YOURS_KEYS, VOIDAI_KEYS, CHATANYWHERE_KEYS
+
+# ---------------------------------------------------------------------------
 #  D1 database binding
 #
 #  D1 is Cloudflare's free SQLite-in-the-cloud. The bot stores user settings,

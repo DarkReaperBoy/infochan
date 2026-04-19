@@ -3,6 +3,29 @@
  *  SETUP GUIDE — READ THIS FIRST (assumes zero prior Cloudflare knowledge)
  * ============================================================================
  *
+ *  FAST PATH — click-to-deploy (recommended for most users):
+ *
+ *     https://deploy.workers.cloudflare.com/?url=https://github.com/darkreaperboy/infochan
+ *
+ *  Click the button in README.md. Cloudflare will fork this repo into your
+ *  account, auto-create the D1 database from wrangler.toml, and PROMPT YOU
+ *  for every credential (Telegram token, provider keys, etc.) on a web form
+ *  before deploying. No terminal, no editing this file.
+ *
+ *  After deploy:
+ *    1. Open  https://<your-worker>.workers.dev/?action=init  once in a
+ *       browser to register the Telegram webhook.
+ *    2. Message your bot.
+ *
+ *  You can edit the vars anytime at:
+ *    Cloudflare Dashboard → Workers & Pages → <your-worker> →
+ *    Settings → Variables → Edit Variables
+ *
+ *  The CLI flow below is only needed if you want to develop locally, add
+ *  features, or deploy from your own terminal.
+ *
+ * ============================================================================
+ *
  *  WHAT THIS FILE IS
  *  -----------------
  *  A single-file Telegram AI chatbot that runs on Cloudflare Workers (free
@@ -111,10 +134,19 @@
  *      literally looks for `env.d1_db`, so renaming it will break things.
  *
  *  ────────────────────────────────────────────────────────────────────────
- *  STEP 6 — FILL IN CREDENTIALS IN THIS FILE
+ *  STEP 6 — FILL IN CREDENTIALS  (two ways, pick one)
  *  ────────────────────────────────────────────────────────────────────────
- *  Scroll down to the `CONFIG = { ... }` block. Every `YOUR_..._HERE` string
- *  has a docstring above it explaining where to get the real value.
+ *
+ *  WAY A (recommended) — edit wrangler.toml `[vars]` block.
+ *     Keeps credentials out of this file entirely. The hydration helper at
+ *     the bottom of this file (`hydrateConfigFromEnv`) copies env vars into
+ *     CONFIG at the start of every request. For production, promote each
+ *     [vars] entry to an encrypted secret with `wrangler secret put NAME`.
+ *
+ *  WAY B — edit CONFIG directly in this file.
+ *     Scroll down to the `CONFIG = { ... }` block. Every `YOUR_..._HERE`
+ *     string has a docstring above it explaining where to get the real
+ *     value. Simpler but commits your keys to the deploy bundle.
  *
  *  Bare minimum to boot:
  *     • TELEGRAM_TOKENS        ← from step 1e
@@ -8917,8 +8949,70 @@ async function initD1Schema(d1) {
   }
 }
 
+// ============================================================================
+//  Env-var hydration — lets Cloudflare Deploy-button users fill in credentials
+//  via the web UI (wrangler.toml [vars]) instead of editing this file.
+//
+//  Any env var set in the Worker's "Settings → Variables" overrides the
+//  matching CONFIG value. If unset, the CONFIG default is kept (which is a
+//  YOUR_..._HERE placeholder unless you hardcoded something).
+//
+//  Recognised env vars:
+//    TELEGRAM_TOKENS          — comma-separated bot tokens
+//    ADMIN_USER_IDS           — comma-separated numeric Telegram IDs
+//    CLOUDFLARE_ACCOUNT_ID    — 32-char hex account ID
+//    CLOUDFLARE_API_TOKEN     — token with Workers AI Read+Run
+//    CLOUDFLARE_GATEWAY_ID    — AI Gateway slug (required for Gemini)
+//    SERPER_API_KEY           — optional, for /system → Web Search
+//    <PROVIDER>_KEYS          — per-provider override, comma-separated.
+//                               Naming: uppercase the provider name, swap
+//                               non-alphanumerics for "_".
+//                               e.g. GEMINI_KEYS, GROQ_KEYS, OPENROUTER_KEYS,
+//                                    G4F_KEYS, G4F_OLLAMA_KEYS,
+//                                    VERCEL_SHARE_YOURS_KEYS, etc.
+// ============================================================================
+let CONFIG_HYDRATED = false;
+function hydrateConfigFromEnv(env) {
+  if (CONFIG_HYDRATED) return;
+  CONFIG_HYDRATED = true;
+
+  const split = (s) => s.split(",").map((x) => x.trim()).filter(Boolean);
+
+  if (env.TELEGRAM_TOKENS) CONFIG.TELEGRAM_TOKENS = split(env.TELEGRAM_TOKENS);
+  if (env.ADMIN_USER_IDS)
+    CONFIG.ADMIN_USER_IDS = split(env.ADMIN_USER_IDS)
+      .map(Number)
+      .filter((n) => Number.isFinite(n));
+  if (env.CLOUDFLARE_ACCOUNT_ID)
+    CONFIG.CLOUDFLARE_ACCOUNT_ID = env.CLOUDFLARE_ACCOUNT_ID;
+  if (env.CLOUDFLARE_API_TOKEN)
+    CONFIG.CLOUDFLARE_API_TOKEN = env.CLOUDFLARE_API_TOKEN;
+  if (env.CLOUDFLARE_GATEWAY_ID)
+    CONFIG.CLOUDFLARE_GATEWAY_ID = env.CLOUDFLARE_GATEWAY_ID;
+  if (env.SERPER_API_KEY) CONFIG.SERPER_API_KEY = env.SERPER_API_KEY;
+
+  // Per-provider key overrides via <PROVIDER>_KEYS env vars.
+  for (const p of CONFIG.PROVIDERS) {
+    const envName =
+      p.name
+        .toUpperCase()
+        .replace(/[^A-Z0-9]+/g, "_")
+        .replace(/^_|_$/g, "") + "_KEYS";
+    if (env[envName]) p.keys = split(env[envName]);
+  }
+
+  // Convenience: the "cloudflare" provider reuses CLOUDFLARE_API_TOKEN.
+  // If the user set that but not CLOUDFLARE_KEYS, mirror it automatically.
+  if (!env.CLOUDFLARE_KEYS && env.CLOUDFLARE_API_TOKEN) {
+    const cf = CONFIG.PROVIDERS.find((p) => p.name === "cloudflare");
+    if (cf) cf.keys = [env.CLOUDFLARE_API_TOKEN];
+  }
+}
+
 export default {
   async fetch(request, env, ctx) {
+    hydrateConfigFromEnv(env);
+
     const url = new URL(request.url);
     const path = url.pathname;
 

@@ -6,9 +6,24 @@ keys, deploy.
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/darkreaperboy/infochan)
 
-One-click deploy: the button above forks this repo into your Cloudflare
-account, creates the Worker, and provisions the D1 database automatically. You
-still have to fill in API keys afterwards — see **Quick start** below.
+**One-click deploy.** The button above does everything for you:
+
+1. Forks this repo into your GitHub
+2. Creates the Worker on your Cloudflare account
+3. Auto-creates the D1 database from `wrangler.toml`
+4. **Prompts you for every credential on a web form** — Telegram token,
+   admin user IDs, at least one provider key — no terminal, no editing code
+5. Deploys
+
+After deploy, open `https://<your-worker>.workers.dev/?action=init` once in a
+browser to register the Telegram webhook. Done.
+
+You can edit the credentials anytime at: **Cloudflare Dashboard → Workers &
+Pages → your-worker → Settings → Variables**.
+
+> **Security note:** deploy-button vars are plaintext. For production, open a
+> terminal once and run `wrangler secret put TELEGRAM_TOKENS` (etc.) to promote
+> them to encrypted secrets. The code reads both identically.
 
 ---
 
