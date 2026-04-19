@@ -4,10 +4,10 @@
 #
 #  WHAT THIS FILE IS
 #    A config file read by the `wrangler` CLI. It tells Cloudflare WHAT to
-#    deploy (main.copy.js) and WHICH resources (a D1 database) to attach.
+#    deploy (main.js) and WHICH resources (a D1 database) to attach.
 #    You edit this file exactly ONCE — to paste your D1 database_id.
 #
-#  STEP-BY-STEP (full setup is in main.copy.js — this is the short version):
+#  STEP-BY-STEP (full setup is in main.js — this is the short version):
 #
 #    1. Install tools (once per computer):
 #         # Install Node.js 20+ from https://nodejs.org  (or `brew install node`)
@@ -28,7 +28,7 @@
 #       Paste that UUID into the `database_id = "..."` line BELOW.
 #       DO NOT change `binding = "d1_db"` — the code reads `env.d1_db`.
 #
-#    3. Fill in API keys in main.copy.js (scroll through the CONFIG block).
+#    3. Fill in API keys in main.js (scroll through the CONFIG block).
 #
 #    4. Deploy:
 #         wrangler deploy
@@ -57,9 +57,8 @@ compatibility_date = "2025-01-01"
 # Needed for a few Node-style APIs the bot uses (Buffer, etc.).
 compatibility_flags = ["nodejs_compat"]
 
-# Keep bundle size small — this is a single-file Worker, no build step needed.
-# If you ever add npm deps, remove this and run `wrangler deploy` normally.
-# no_bundle = true
+# This is a single-file Worker with no build step. If you later add npm
+# deps, Wrangler will bundle them automatically — no extra config needed.
 
 # ---------------------------------------------------------------------------
 #  [vars]  — the Cloudflare Deploy-button UI prompts for each of these at
@@ -158,12 +157,12 @@ database_id   = "REPLACE_WITH_DATABASE_ID_FROM_WRANGLER_D1_CREATE"
 enabled = true
 
 # ---------------------------------------------------------------------------
-#  Optional: move secrets out of main.copy.js
+#  Optional: move secrets out of main.js
 #
 #  The bot currently reads credentials from the CONFIG object in code. If you
 #  would rather keep them out of the source file, use:
 #
-#      wrangler secret put TELEGRAM_TOKEN
+#      wrangler secret put TELEGRAM_TOKENS
 #      wrangler secret put CLOUDFLARE_API_TOKEN
 #      ...etc
 #

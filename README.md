@@ -64,7 +64,7 @@ key total. The ⭐ rows are the easiest free options to start with.
 
 ## 🚀 Deploy
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/darkreaperboy/infochan) — *Cloudflare's form won't let fields stay empty. For anything you don't care about, just type any junk (`-`, `none`, `skip`, `asdf`, whatever) and move on. The code treats those as unset.*
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/darkreaperboy/infochan) — *Cloudflare's form won't let fields stay empty. For **provider keys you won't use**, typing junk (`-`, `none`, `asdf`) is fine — you'll never select that provider in `/system`, so the bot never tries the bogus key. Do **not** put junk in required fields (Telegram token, admin ID, Cloudflare account/token) — those are actually read on every request.*
 
 After the deploy finishes:
 
@@ -282,9 +282,10 @@ names are ignored.
 
 ## Security notes
 
-- `main.js` is the sanitized template. `main.js` is your working copy
-  with real keys — **do not commit it to a public repo.** Add it to
-  `.gitignore`.
+- `main.js` in this repo is the sanitized template (every credential is
+  `YOUR_..._HERE`). If you paste real keys into it instead of using the
+  deploy-form `[vars]` / `wrangler secret put`, **do not commit that copy
+  back to a public repo.** Rotate any key that has been pushed.
 - `?action=wipe` has no authentication. Anyone who guesses your Worker URL
   can wipe your DB. Either keep the URL secret, or add an admin check in the
   router before making this repo public.
