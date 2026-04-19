@@ -36,7 +36,7 @@ links below **in other tabs**, collect the values, then come back and paste.
 | `OPENROUTER_KEYS`  | `sk-or-v1-...`   | [openrouter.ai/keys](https://openrouter.ai/keys) — free models available |
 | `MISTRAL_KEYS`     | (plain)          | [console.mistral.ai](https://console.mistral.ai/api-keys) |
 | `GITHUB_KEYS`      | `github_pat_...` | [Create PAT](https://github.com/settings/personal-access-tokens) — free for GitHub Models |
-| `POE_KEYS`         | (plain)          | [poe.com/api_key](https://poe.com/api_key) — paid |
+| `POE_KEYS`         | (plain)          | [poe.com/api_key](https://poe.com/api_key) — free daily points |
 | `CEREBRAS_KEYS`    | `csk-...`        | [cloud.cerebras.ai](https://cloud.cerebras.ai/) |
 | `NVIDIA_KEYS`      | `nvapi-...`      | [build.nvidia.com](https://build.nvidia.com/) |
 

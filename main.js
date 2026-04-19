@@ -498,8 +498,10 @@ const CONFIG = {
     },
     /**
      * poe — Poe.com API (Anthropic, OpenAI, etc. behind a single key).
+     * Free tier available — Poe gives every account daily points that can be
+     * spent on any bot, including Claude/GPT/etc.
      * How to get a key:
-     *   1. Subscribe at https://poe.com/
+     *   1. Create a free account at https://poe.com/
      *   2. https://poe.com/api_key → copy the key
      */
     {
