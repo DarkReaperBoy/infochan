@@ -1,0 +1,114 @@
+# ============================================================================
+#  wrangler.toml — Cloudflare Workers config for the Infochan Telegram bot
+# ============================================================================
+#
+#  WHAT THIS FILE IS
+#    A config file read by the `wrangler` CLI. It tells Cloudflare WHAT to
+#    deploy (main.copy.js) and WHICH resources (a D1 database) to attach.
+#    You edit this file exactly ONCE — to paste your D1 database_id.
+#
+#  STEP-BY-STEP (full setup is in main.copy.js — this is the short version):
+#
+#    1. Install tools (once per computer):
+#         # Install Node.js 20+ from https://nodejs.org  (or `brew install node`)
+#         npm install -g wrangler
+#         wrangler login          # opens browser, click Allow
+#
+#    2. Create the database:
+#         wrangler d1 create infochan-bot
+#
+#       Wrangler prints something like:
+#
+#         ✅ Successfully created DB 'infochan-bot'
+#         [[d1_databases]]
+#         binding = "DB"
+#         database_name = "infochan-bot"
+#         database_id = "a1b2c3d4-5678-90ab-cdef-1234567890ab"   ← COPY THIS
+#
+#       Paste that UUID into the `database_id = "..."` line BELOW.
+#       DO NOT change `binding = "d1_db"` — the code reads `env.d1_db`.
+#
+#    3. Fill in API keys in main.copy.js (scroll through the CONFIG block).
+#
+#    4. Deploy:
+#         wrangler deploy
+#
+#       It prints a URL like https://infochan-bot.YOURNAME.workers.dev
+#
+#    5. Initialize (one time):
+#         Open https://infochan-bot.YOURNAME.workers.dev/?action=init
+#         in your browser. You should see green "Active" and "Updated" badges.
+#
+#    6. Message your bot on Telegram. Done.
+#
+#  Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
+# ============================================================================
+
+# The Worker's name — this becomes the subdomain:
+#   https://<name>.<your-account>.workers.dev
+name = "infochan-bot"
+
+# Entry point for the Worker.
+main = "main.js"
+
+# Pin the Workers runtime to a known-good date. Bump occasionally.
+compatibility_date = "2025-01-01"
+
+# Needed for a few Node-style APIs the bot uses (Buffer, etc.).
+compatibility_flags = ["nodejs_compat"]
+
+# Keep bundle size small — this is a single-file Worker, no build step needed.
+# If you ever add npm deps, remove this and run `wrangler deploy` normally.
+# no_bundle = true
+
+# ---------------------------------------------------------------------------
+#  D1 database binding
+#
+#  D1 is Cloudflare's free SQLite-in-the-cloud. The bot stores user settings,
+#  chat history, and character cards here. You do NOT write any SQL — the
+#  bot creates its own tables automatically the first time you visit
+#  /?action=init in your browser.
+#
+#  THREE FIELDS, ONE TO EDIT:
+#    • binding       — the variable name the code uses: `env.d1_db`.
+#                      DO NOT RENAME THIS. If you do, the Worker will reply
+#                      "D1 database binding not found" and nothing will work.
+#    • database_name — the human-readable name you gave it in
+#                      `wrangler d1 create infochan-bot`. Cosmetic.
+#    • database_id   — the UUID printed by that command. PASTE IT HERE.
+#                      This is the ONLY thing you need to change in this file.
+# ---------------------------------------------------------------------------
+[[d1_databases]]
+binding       = "d1_db"
+database_name = "infochan-bot"
+database_id   = "REPLACE_WITH_DATABASE_ID_FROM_WRANGLER_D1_CREATE"
+
+# ---------------------------------------------------------------------------
+#  Observability — logs and metrics in the Cloudflare dashboard.
+#  Costs nothing on the free plan; turn off if you prefer.
+# ---------------------------------------------------------------------------
+[observability]
+enabled = true
+
+# ---------------------------------------------------------------------------
+#  Optional: move secrets out of main.copy.js
+#
+#  The bot currently reads credentials from the CONFIG object in code. If you
+#  would rather keep them out of the source file, use:
+#
+#      wrangler secret put TELEGRAM_TOKEN
+#      wrangler secret put CLOUDFLARE_API_TOKEN
+#      ...etc
+#
+#  ...and then rewrite the relevant CONFIG fields to read from `env.*` inside
+#  the `fetch(request, env, ctx)` handler. Not required — just cleaner.
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+#  Optional: custom domain
+#  Uncomment and edit if you want the bot on your own domain instead of
+#  *.workers.dev. The DNS zone must already be on Cloudflare.
+# ---------------------------------------------------------------------------
+# routes = [
+#   { pattern = "bot.example.com/*", custom_domain = true }
+# ]
