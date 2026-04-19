@@ -27,23 +27,32 @@ links below **in other tabs**, collect the values, then come back and paste.
 | `CLOUDFLARE_GATEWAY_ID`    | …you plan to use the `gemini` provider. Any slug works.                       | Dashboard → AI → AI Gateway → Create |
 | `SERPER_API_KEY`           | …you want `/system → Web Search` enabled.                                     | [serper.dev](https://serper.dev/) (2,500 free queries) |
 
-**Provider keys — fill in one or more (comma-separated if you want rotation):**
+**Provider keys — fill in whichever you want (comma-separated for rotation), leave the rest blank:**
 
-| Field              | Format           | Signup / docs |
-| ------------------ | ---------------- | ------------- |
-| `GEMINI_KEYS`      | `AIza...`        | [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) — free |
-| `GROQ_KEYS`        | `gsk_...`        | [console.groq.com](https://console.groq.com/) — free |
-| `OPENROUTER_KEYS`  | `sk-or-v1-...`   | [openrouter.ai/keys](https://openrouter.ai/keys) — free models available |
-| `MISTRAL_KEYS`     | (plain)          | [console.mistral.ai](https://console.mistral.ai/api-keys) |
-| `GITHUB_KEYS`      | `github_pat_...` | [Create PAT](https://github.com/settings/personal-access-tokens) — free for GitHub Models |
-| `POE_KEYS`         | (plain)          | [poe.com/api_key](https://poe.com/api_key) — free daily points |
-| `CEREBRAS_KEYS`    | `csk-...`        | [cloud.cerebras.ai](https://cloud.cerebras.ai/) |
-| `NVIDIA_KEYS`      | `nvapi-...`      | [build.nvidia.com](https://build.nvidia.com/) |
+All 19 providers are prompted on the deploy form. You only need **one** working
+key total. The ⭐ rows are the easiest free options to start with.
 
-> Not listed in the deploy form but also supported (set later via dashboard):
-> `KIVEST_KEYS`, `G4F_KEYS`, `G4F_OLLAMA_KEYS`, `G4F_GEMINI_KEYS`, `MNNAI_KEYS`,
-> `NAGA_KEYS`, `NAVY_KEYS`, `POIXE_KEYS`, `VERCEL_SHARE_YOURS_KEYS`,
-> `VOIDAI_KEYS`, `CHATANYWHERE_KEYS`.
+| Field                     | Format           | Signup / docs |
+| ------------------------- | ---------------- | ------------- |
+| ⭐ `GEMINI_KEYS`          | `AIza...`        | [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) — free |
+| ⭐ `GROQ_KEYS`            | `gsk_...`        | [console.groq.com](https://console.groq.com/) — free |
+| `OPENROUTER_KEYS`         | `sk-or-v1-...`   | [openrouter.ai/keys](https://openrouter.ai/keys) — free models available |
+| `MISTRAL_KEYS`            | (plain)          | [console.mistral.ai](https://console.mistral.ai/api-keys) |
+| `GITHUB_KEYS`             | `github_pat_...` | [Create PAT](https://github.com/settings/personal-access-tokens) — free for GitHub Models |
+| `POE_KEYS`                | (plain)          | [poe.com/api_key](https://poe.com/api_key) — free daily points |
+| `CEREBRAS_KEYS`           | `csk-...`        | [cloud.cerebras.ai](https://cloud.cerebras.ai/) |
+| `NVIDIA_KEYS`             | `nvapi-...`      | [build.nvidia.com](https://build.nvidia.com/) |
+| `KIVEST_KEYS`             | `sk-...`         | [ai.ezif.in](https://ai.ezif.in/) |
+| `G4F_KEYS`                | `g4f_u_...`      | [g4f.space](https://g4f.space/) — free proxy |
+| `G4F_OLLAMA_KEYS`         | `g4f_u_...`      | same — ollama endpoint |
+| `G4F_GEMINI_KEYS`         | `g4f_u_...`      | same — gemini endpoint |
+| `MNNAI_KEYS`              | `mnn-key-...`    | [mnnai.ru](https://mnnai.ru/) |
+| `NAGA_KEYS`               | `ng-...`         | [naga.ac](https://naga.ac/) |
+| `NAVY_KEYS`               | `sk-navy-...`    | [api.navy](https://api.navy/) |
+| `POIXE_KEYS`              | `sk-...`         | [poixe.com](https://poixe.com/) — has free tier |
+| `VERCEL_SHARE_YOURS_KEYS` | `vck_...`        | [vercel.com](https://vercel.com/) → AI Gateway → API Keys |
+| `VOIDAI_KEYS`             | `sk-voidai-...`  | [voidai.app](https://voidai.app/) |
+| `CHATANYWHERE_KEYS`       | `sk-...`         | [api.chatanywhere.tech](https://api.chatanywhere.tech/) |
 
 **Fields you can ignore on the form:**
 

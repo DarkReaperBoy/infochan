@@ -100,25 +100,33 @@ CLOUDFLARE_GATEWAY_ID = ""
 #   https://serper.dev/ → dashboard → API Key
 SERPER_API_KEY = ""
 
-# ---- Provider keys (all optional — fill in the ones you want to use) ----
+# ---- Provider keys (ALL optional — leave blank for any you don't use) ----
 #
 # Each is comma-separated. You need at least ONE working provider or the
 # bot won't be able to reply. The easiest free options are GEMINI_KEYS
 # (Google AI Studio) and GROQ_KEYS (console.groq.com).
-GEMINI_KEYS     = ""
-GROQ_KEYS       = ""
-OPENROUTER_KEYS = ""
-MISTRAL_KEYS    = ""
-GITHUB_KEYS     = ""   # GitHub Models — format: github_pat_...
-POE_KEYS        = ""   # Poe.com (requires paid subscription)
-CEREBRAS_KEYS   = ""
-NVIDIA_KEYS     = ""
 #
-# Other providers recognised by the hydration code (set via dashboard if you
-# want them, they won't show up in the deploy prompt by default):
-#   KIVEST_KEYS, G4F_KEYS, G4F_OLLAMA_KEYS, G4F_GEMINI_KEYS,
-#   MNNAI_KEYS, NAGA_KEYS, NAVY_KEYS, POIXE_KEYS,
-#   VERCEL_SHARE_YOURS_KEYS, VOIDAI_KEYS, CHATANYWHERE_KEYS
+# Every provider the bot supports is listed here so the deploy form prompts
+# for it. If you don't want a provider, just leave its field empty.
+GEMINI_KEYS             = ""   # AIza...       — free, aistudio.google.com/app/apikey
+GROQ_KEYS               = ""   # gsk_...       — free, console.groq.com
+OPENROUTER_KEYS         = ""   # sk-or-v1-...  — free tier, openrouter.ai/keys
+MISTRAL_KEYS            = ""   #               — console.mistral.ai/api-keys
+GITHUB_KEYS             = ""   # github_pat_...— free GitHub Models
+POE_KEYS                = ""   #               — free daily points, poe.com/api_key
+CEREBRAS_KEYS           = ""   # csk-...       — cloud.cerebras.ai
+NVIDIA_KEYS             = ""   # nvapi-...     — build.nvidia.com
+KIVEST_KEYS             = ""   # sk-...        — ai.ezif.in
+G4F_KEYS                = ""   # g4f_u_...     — g4f.space
+G4F_OLLAMA_KEYS         = ""   # g4f_u_...     — g4f.space (ollama endpoint)
+G4F_GEMINI_KEYS         = ""   # g4f_u_...     — g4f.space (gemini endpoint)
+MNNAI_KEYS              = ""   # mnn-key-...   — mnnai.ru
+NAGA_KEYS               = ""   # ng-...        — naga.ac
+NAVY_KEYS               = ""   # sk-navy-...   — api.navy
+POIXE_KEYS              = ""   # sk-...        — poixe.com (has free tier)
+VERCEL_SHARE_YOURS_KEYS = ""   # vck_...       — vercel.com AI Gateway
+VOIDAI_KEYS             = ""   # sk-voidai-... — voidai.app
+CHATANYWHERE_KEYS       = ""   # sk-...        — api.chatanywhere.tech
 
 # ---------------------------------------------------------------------------
 #  D1 database binding
