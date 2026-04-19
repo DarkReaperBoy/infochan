@@ -4,26 +4,68 @@ A single-file Telegram AI chatbot that runs on **Cloudflare Workers** (free tier
 works). One JS file, one D1 database, many AI providers — drop it in, fill in
 keys, deploy.
 
+## 📋 Before you click Deploy — get these ready
+
+The Cloudflare deploy form is a flat list of variable names with no help text
+(that's a Cloudflare limitation, not something this repo can fix). Open the
+links below **in other tabs**, collect the values, then come back and paste.
+
+**Required (bot won't boot without these):**
+
+| Field in deploy form       | What to paste                                                                 | Where to get it |
+| -------------------------- | ----------------------------------------------------------------------------- | --------------- |
+| `TELEGRAM_TOKENS`          | One or more bot tokens, comma-separated. Format: `<id>:<secret>`.             | [@BotFather](https://t.me/BotFather) → `/newbot` |
+| `ADMIN_USER_IDS`           | Your numeric Telegram user ID(s), comma-separated.                            | [@userinfobot](https://t.me/userinfobot) |
+| `CLOUDFLARE_ACCOUNT_ID`    | 32-char hex. Same Cloudflare account you're deploying to.                     | [dash.cloudflare.com](https://dash.cloudflare.com/) → Workers & Pages → sidebar shows Account ID |
+| `CLOUDFLARE_API_TOKEN`     | Token with **Workers AI: Read + Run**.                                        | [API Tokens → Create](https://dash.cloudflare.com/profile/api-tokens) → "Custom token" |
+| At least one provider key  | See the provider table below.                                                 | Pick one: Gemini / Groq are free and easiest. |
+
+**Conditional:**
+
+| Field                      | Fill in only if…                                                              | Where to get it |
+| -------------------------- | ----------------------------------------------------------------------------- | --------------- |
+| `CLOUDFLARE_GATEWAY_ID`    | …you plan to use the `gemini` provider. Any slug works.                       | Dashboard → AI → AI Gateway → Create |
+| `SERPER_API_KEY`           | …you want `/system → Web Search` enabled.                                     | [serper.dev](https://serper.dev/) (2,500 free queries) |
+
+**Provider keys — fill in one or more (comma-separated if you want rotation):**
+
+| Field              | Format           | Signup / docs |
+| ------------------ | ---------------- | ------------- |
+| `GEMINI_KEYS`      | `AIza...`        | [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) — free |
+| `GROQ_KEYS`        | `gsk_...`        | [console.groq.com](https://console.groq.com/) — free |
+| `OPENROUTER_KEYS`  | `sk-or-v1-...`   | [openrouter.ai/keys](https://openrouter.ai/keys) — free models available |
+| `MISTRAL_KEYS`     | (plain)          | [console.mistral.ai](https://console.mistral.ai/api-keys) |
+| `GITHUB_KEYS`      | `github_pat_...` | [Create PAT](https://github.com/settings/personal-access-tokens) — free for GitHub Models |
+| `POE_KEYS`         | (plain)          | [poe.com/api_key](https://poe.com/api_key) — paid |
+| `CEREBRAS_KEYS`    | `csk-...`        | [cloud.cerebras.ai](https://cloud.cerebras.ai/) |
+| `NVIDIA_KEYS`      | `nvapi-...`      | [build.nvidia.com](https://build.nvidia.com/) |
+
+> Not listed in the deploy form but also supported (set later via dashboard):
+> `KIVEST_KEYS`, `G4F_KEYS`, `G4F_OLLAMA_KEYS`, `G4F_GEMINI_KEYS`, `MNNAI_KEYS`,
+> `NAGA_KEYS`, `NAVY_KEYS`, `POIXE_KEYS`, `VERCEL_SHARE_YOURS_KEYS`,
+> `VOIDAI_KEYS`, `CHATANYWHERE_KEYS`.
+
+**Fields you can ignore on the form:**
+
+- **Project name** — anything, e.g. `infochan-bot`. Becomes part of your URL.
+- **Select D1 database** → click **"Create new"**, name it anything (`infochan-db` is fine). Location hint: pick the region nearest you.
+- **Build command / Deploy command** — leave empty. This is a single-file Worker, no build step.
+
+---
+
+## 🚀 Deploy
+
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/darkreaperboy/infochan)
 
-**One-click deploy.** The button above does everything for you:
+After the deploy finishes:
 
-1. Forks this repo into your GitHub
-2. Creates the Worker on your Cloudflare account
-3. Auto-creates the D1 database from `wrangler.toml`
-4. **Prompts you for every credential on a web form** — Telegram token,
-   admin user IDs, at least one provider key — no terminal, no editing code
-5. Deploys
+1. Note the Worker URL Cloudflare shows you (e.g. `https://infochan-bot.your-subdomain.workers.dev`).
+2. Open `https://<that-url>/?action=init` **once** in a browser. You should see green "Active" / "Updated" badges.
+3. Find your bot on Telegram and send `/new`.
 
-After deploy, open `https://<your-worker>.workers.dev/?action=init` once in a
-browser to register the Telegram webhook. Done.
+Edit credentials anytime at **Dashboard → Workers & Pages → your-worker → Settings → Variables**.
 
-You can edit the credentials anytime at: **Cloudflare Dashboard → Workers &
-Pages → your-worker → Settings → Variables**.
-
-> **Security note:** deploy-button vars are plaintext. For production, open a
-> terminal once and run `wrangler secret put TELEGRAM_TOKENS` (etc.) to promote
-> them to encrypted secrets. The code reads both identically.
+> **Security:** deploy-form values are stored as plaintext env vars. For production, open a terminal once and run `wrangler secret put TELEGRAM_TOKENS` (etc.) to promote them to encrypted secrets. The code reads both identically.
 
 ---
 
